@@ -11,7 +11,7 @@ interface RepositoryInterface
 {
     public function dataClass(): string;
 
-    public function emptyData(): Data;
+    public function empty(): array;
 
     public function new(mixed $data): Data;
 

@@ -10,13 +10,13 @@ use Illuminate\Support\Collection;
 use Spatie\LaravelData\Data;
 use Vaskiq\LaravelDataLayer\Contracts\DataFactoryInterface;
 
-abstract class AbstractEloquentRepository extends AbstractRepository
+abstract class EloquentRepository extends AbstractRepository
 {
     protected readonly string $modelClass;
 
     public function __construct(
-        DataFactoryInterface $dataFactory,
         protected readonly Model $model,
+        DataFactoryInterface $dataFactory,
     ) {
         parent::__construct($dataFactory);
         $this->modelClass = get_class($model);

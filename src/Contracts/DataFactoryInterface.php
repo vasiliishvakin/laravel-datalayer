@@ -9,7 +9,7 @@ use Spatie\LaravelData\Data;
 
 interface DataFactoryInterface
 {
-    public static function create(string $dataClass, array $source): Data;
+    public static function create(string $dataClass, mixed $source): Data;
 
     public static function empty(string $dataClass): Data;
 

@@ -10,7 +10,7 @@ use Vaskiq\LaravelDataLayer\Contracts\DataFactoryInterface;
 
 class DataFactory implements DataFactoryInterface
 {
-    public static function create(string $dataClass, array $source): Data
+    public static function create(string $dataClass, mixed $source): Data
     {
         return $dataClass::from($source);
     }

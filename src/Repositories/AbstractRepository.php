@@ -30,7 +30,7 @@ abstract class AbstractRepository implements RepositoryInterface
         return $this->dataFactory->create($this->dataClass(), $source);
     }
 
-    public function emptyData(): Data
+    public function empty(): array
     {
         return $this->dataFactory->empty($this->dataClass());
     }
