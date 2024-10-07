@@ -1,0 +1,31 @@
+{
+  "name": "vaskiq/laravel-datalayer",
+  "description": "A Laravel package that simplifies data handling across multiple sources using the Repository pattern and structured DTOs.",
+  "autoload": {
+    "psr-4": {
+      "Vaskiq\\LaravelDataLayer\\": "src/"
+    }
+  },
+  "require": {
+    "php": "^8.3",
+    "illuminate/support": "^11.0",
+    "illuminate/database": "^11.0",
+    "illuminate/events": "^11.0",
+    "spatie/laravel-data": "^4.10"
+  },
+  "suggest": {
+    "tapp/laravel-airtable": "Required if you need to use the Airtable repository driver."
+  },
+  "require-dev": {
+    "tapp/laravel-airtable": "^2.3",
+    "laravel/pint": "^1.18",
+    "orchestra/testbench": "^9.5"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Vaskiq\\LaravelDataLayer\\Providers\\LaravelDataLayerServiceProvider"
+      ]
+    }
+  }
+}
