@@ -1,6 +1,7 @@
 {
   "name": "vaskiq/laravel-datalayer",
   "description": "A Laravel package that simplifies data handling across multiple sources using the Repository pattern and structured DTOs.",
+  "license": "Apache-2.0",
   "autoload": {
     "psr-4": {
       "Vaskiq\\LaravelDataLayer\\": "src/"
