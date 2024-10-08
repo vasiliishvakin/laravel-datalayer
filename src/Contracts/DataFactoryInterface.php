@@ -11,7 +11,7 @@ interface DataFactoryInterface
 {
     public static function create(string $dataClass, mixed $source): Data;
 
-    public static function empty(string $dataClass): Data;
+    public static function empty(string $dataClass): array;
 
     public static function map(string $dataClass, Collection $collection): Collection;
 }

@@ -15,7 +15,7 @@ class DataFactory implements DataFactoryInterface
         return $dataClass::from($source);
     }
 
-    public static function empty(string $dataClass): Data
+    public static function empty(string $dataClass): array
     {
         return $dataClass::empty();
     }
