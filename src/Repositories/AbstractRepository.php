@@ -25,19 +25,9 @@ abstract class AbstractRepository implements RepositoryInterface
 
     abstract public function find(string|int $id): ?Data;
 
-    protected function toData(mixed $source): Data
-    {
-        return $this->dataFactory->create($this->dataClass(), $source);
-    }
-
     public function empty(): array
     {
         return $this->dataFactory->empty($this->dataClass());
-    }
-
-    protected function toDataCollection(Collection $models): Collection
-    {
-        return $this->dataFactory->map($this->dataClass(), $models);
     }
 
     public function new(mixed $data): Data
@@ -53,5 +43,15 @@ abstract class AbstractRepository implements RepositoryInterface
         }
 
         return $data;
+    }
+
+    protected function toData(mixed $source): Data
+    {
+        return $this->dataFactory->create($this->dataClass(), $source);
+    }
+
+    protected function toDataCollection(Collection $models): Collection
+    {
+        return $this->dataFactory->map($this->dataClass(), $models);
     }
 }

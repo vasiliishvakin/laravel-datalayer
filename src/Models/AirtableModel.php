@@ -17,6 +17,7 @@ abstract class AirtableModel implements AirtableModelInterface
 
     public function query(): Airtable
     {
+        // @phpstan-ignore class.notFound
         return AirtableFacade::table($this->table);
     }
 

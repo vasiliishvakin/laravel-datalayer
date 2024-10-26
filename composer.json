@@ -18,7 +18,6 @@
     "tapp/laravel-airtable": "Required if you need to use the Airtable repository driver."
   },
   "require-dev": {
-    "tapp/laravel-airtable": "^2.3",
     "laravel/pint": "^1.18",
     "orchestra/testbench": "^9.5"
   },

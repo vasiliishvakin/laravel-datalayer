@@ -22,30 +22,6 @@ abstract class EloquentRepository extends AbstractRepository
         $this->modelClass = get_class($model);
     }
 
-    protected function fill(Model $model, Data $data): Model
-    {
-        $model->fill($data->toArray());
-
-        return $model;
-    }
-
-    protected function fillFromArray(Model $model, array $data): Model
-    {
-        $model->fill($data);
-
-        return $model;
-    }
-
-    protected function model(): Model
-    {
-        return new $this->modelClass;
-    }
-
-    protected function query(): Builder
-    {
-        return $this->model->newQuery();
-    }
-
     public function find(string|int $id): ?Data
     {
         $model = $this->model->find($id);
@@ -64,7 +40,13 @@ abstract class EloquentRepository extends AbstractRepository
     /** @return Data|Collection<string|int, Data>|null */
     public function findBy(string $field, mixed $value, bool $onlyFirst = false): Data|Collection|null
     {
-        $query = $this->model()->where($field, $value);
+        $query = $this->query()
+            ->when(is_null($value), fn($q) => $q->whereNull($field))
+            ->when(
+                is_array($value),
+                fn($q) => $q->whereIn($field, $value),
+                fn($q) => $q->where($field, $value)
+            );
 
         if ($onlyFirst) {
             $result = $query->first();
@@ -123,5 +105,29 @@ abstract class EloquentRepository extends AbstractRepository
         $model = $this->query()->with($relations)->find($id);
 
         return $model ? $this->toData($model) : $data;
+    }
+
+    protected function fill(Model $model, Data $data): Model
+    {
+        $model->fill($data->toArray());
+
+        return $model;
+    }
+
+    protected function fillFromArray(Model $model, array $data): Model
+    {
+        $model->fill($data);
+
+        return $model;
+    }
+
+    protected function model(): Model
+    {
+        return new $this->modelClass;
+    }
+
+    protected function query(): Builder
+    {
+        return $this->model->newQuery();
     }
 }

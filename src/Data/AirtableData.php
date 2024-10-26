@@ -40,23 +40,6 @@ abstract class AirtableData extends Data
         return static::$mapsCache[$field];
     }
 
-    protected static function field(string $name, array $data, ?callable $closure = null): mixed
-    {
-        $fieldName = static::mapField($name);
-
-        $result = match ($fieldName) {
-            'recId' => $data['id'],
-            'createdTime' => $data['createdTime'],
-            default => $data['fields'][$fieldName] ?? null,
-        };
-
-        if (is_callable($closure)) {
-            $result = $closure($result);
-        }
-
-        return $result;
-    }
-
     public function toAirtableArray(?callable $closure = null): array
     {
         $data = $this->toArray();
@@ -74,5 +57,22 @@ abstract class AirtableData extends Data
         }
 
         return $fields;
+    }
+
+    protected static function field(string $name, array $data, ?callable $closure = null): mixed
+    {
+        $fieldName = static::mapField($name);
+
+        $result = match ($fieldName) {
+            'recId' => $data['id'],
+            'createdTime' => $data['createdTime'],
+            default => $data['fields'][$fieldName] ?? null,
+        };
+
+        if (is_callable($closure)) {
+            $result = $closure($result);
+        }
+
+        return $result;
     }
 }

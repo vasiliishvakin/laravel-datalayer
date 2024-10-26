@@ -20,53 +20,6 @@ abstract class AirtableRepository extends AbstractRepository
         parent::__construct($dataFactory);
     }
 
-    protected function responseHasError(?Collection $response): bool
-    {
-        return $response->has('error') && ! empty($response->get('error'));
-    }
-
-    protected function responseGetError(?Collection $response): ?AirtableError
-    {
-        if (! $response->has('error')) {
-            return null;
-        }
-
-        $error = $response->get('error');
-        if (is_array($error)) {
-            return new AirtableError(
-                message: $error['message'],
-                type: $error['type'],
-            );
-        } else {
-            return new AirtableError(
-                message: $error,
-            );
-        }
-    }
-
-    protected function isEmptyResponse(?Collection $response): bool
-    {
-        if ($response === null) {
-            return true;
-        } elseif ($response instanceof Collection) {
-            if ($response->isEmpty()) {
-                return true;
-            } elseif ($this->responseHasError($response)) {
-                $error = $this->responseGetError($response);
-                if ($error->message === 'NOT_FOUND') {
-                    return true;
-                } elseif (
-                    $error->type === 'INVALID_PERMISSIONS_OR_MODEL_NOT_FOUND'
-                    || $error->type === 'NOT_FOUND'
-                ) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
     public function find(string|int $id): ?Data
     {
         /** @var Collection */
@@ -218,5 +171,52 @@ abstract class AirtableRepository extends AbstractRepository
         }
 
         return $result['deleted'];
+    }
+
+    protected function responseHasError(?Collection $response): bool
+    {
+        return $response->has('error') && ! empty($response->get('error'));
+    }
+
+    protected function responseGetError(?Collection $response): ?AirtableError
+    {
+        if (! $response->has('error')) {
+            return null;
+        }
+
+        $error = $response->get('error');
+        if (is_array($error)) {
+            return new AirtableError(
+                message: $error['message'],
+                type: $error['type'],
+            );
+        } else {
+            return new AirtableError(
+                message: $error,
+            );
+        }
+    }
+
+    protected function isEmptyResponse(?Collection $response): bool
+    {
+        if ($response === null) {
+            return true;
+        } elseif ($response instanceof Collection) {
+            if ($response->isEmpty()) {
+                return true;
+            } elseif ($this->responseHasError($response)) {
+                $error = $this->responseGetError($response);
+                if ($error->message === 'NOT_FOUND') {
+                    return true;
+                } elseif (
+                    $error->type === 'INVALID_PERMISSIONS_OR_MODEL_NOT_FOUND'
+                    || $error->type === 'NOT_FOUND'
+                ) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
