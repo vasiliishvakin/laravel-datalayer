@@ -11,6 +11,12 @@ use Vaskiq\LaravelDataLayer\Data\AirtableData;
 use Vaskiq\LaravelDataLayer\Errors\AirtableError;
 use Vaskiq\LaravelDataLayer\Models\AirtableModel;
 
+/**
+ * @template TData of AirtableData
+ * @template TModel of AirtableModel
+ *
+ * @extends AbstractRepository<TData, TModel>
+ */
 abstract class AirtableRepository extends AbstractRepository
 {
     public function __construct(
@@ -39,7 +45,7 @@ abstract class AirtableRepository extends AbstractRepository
         return $this->toData($record);
     }
 
-    /** @return Collection<int|string|int, Data> */
+    /** @return Collection<int|string|int, TData> */
     public function all(): Collection
     {
         $records = $this->model->all();
@@ -52,7 +58,7 @@ abstract class AirtableRepository extends AbstractRepository
         return $this->toDataCollection($records);
     }
 
-    /** @return Data|null|Collection<string|int, Data> */
+    /** @return Data|null|Collection<string|int, TData> */
     public function findBy(string $field, mixed $value, bool $onlyFirst = false): Data|Collection|null
     {
         $field = $this->dataClass()::mapField($field);

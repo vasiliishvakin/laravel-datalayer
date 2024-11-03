@@ -2,7 +2,7 @@
 
 namespace Vaskiq\LaravelDataLayer\Models;
 
-use Airtable as AirtableFacade;
+use Tapp\Airtable\Facades\AirtableFacade;
 use Tapp\Airtable\Airtable;
 use Vaskiq\LaravelDataLayer\Markers\AirtableModelInterface;
 
@@ -17,7 +17,6 @@ abstract class AirtableModel implements AirtableModelInterface
 
     public function query(): Airtable
     {
-        // @phpstan-ignore class.notFound
         return AirtableFacade::table($this->table);
     }
 

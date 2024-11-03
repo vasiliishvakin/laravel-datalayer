@@ -9,9 +9,27 @@ use Spatie\LaravelData\Data;
 
 interface DataFactoryInterface
 {
-    public static function create(string $dataClass, mixed $source): Data;
+    /**
+     * @template TData of Data
+     *
+     * @param  class-string<TData>  $dataClass
+     * @return TData
+     */
+    public static function create(mixed $source, string $dataClass): Data;
 
+    /**
+     * @template TData of Data
+     *
+     * @param  class-string<TData>  $dataClass
+     */
     public static function empty(string $dataClass): array;
 
-    public static function map(string $dataClass, Collection $collection): Collection;
+    /**
+     * @template TData of Data
+     *
+     * @param  Collection<int, mixed>  $collection
+     * @param  class-string<TData>  $dataClass
+     * @return Collection<int, TData>
+     */
+    public static function map(Collection $collection, string $dataClass): Collection;
 }

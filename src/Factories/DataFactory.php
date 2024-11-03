@@ -10,18 +10,36 @@ use Vaskiq\LaravelDataLayer\Contracts\DataFactoryInterface;
 
 class DataFactory implements DataFactoryInterface
 {
-    public static function create(string $dataClass, mixed $source): Data
+    /**
+     * @template TData of Data
+     *
+     * @param  class-string<TData>  $dataClass
+     * @return TData
+     */
+    public static function create(mixed $source, string $dataClass): Data
     {
         return $dataClass::from($source);
     }
 
+    /**
+     * @template TData of Data
+     *
+     * @param  class-string<TData>  $dataClass
+     */
     public static function empty(string $dataClass): array
     {
         return $dataClass::empty();
     }
 
-    public static function map(string $dataClass, Collection $collection): Collection
+    /**
+     * @template TData of Data
+     *
+     * @param  Collection<int, mixed>  $collection
+     * @param  class-string<TData>  $dataClass
+     * @return Collection<int, TData>
+     */
+    public static function map(Collection $collection, string $dataClass): Collection
     {
-        return $collection->map(fn ($model) => static::create($dataClass, $model));
+        return $collection->map(fn ($model) => static::create($model, $dataClass));
     }
 }
