@@ -7,6 +7,7 @@ namespace Vaskiq\LaravelDataLayer\Repositories;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Spatie\LaravelData\Data;
 use Vaskiq\LaravelDataLayer\Contracts\DataFactoryInterface;
 
@@ -58,11 +59,11 @@ abstract class EloquentRepository extends AbstractRepository
     public function findBy(string $field, mixed $value, bool $onlyFirst = false): Data|Collection|null
     {
         $query = $this->query()
-            ->when(is_null($value), fn($q) => $q->whereNull($field))
+            ->when(is_null($value), fn ($q) => $q->whereNull($field))
             ->when(
                 is_array($value),
-                fn($q) => $q->whereIn($field, $value),
-                fn($q) => $q->where($field, $value)
+                fn ($q) => $q->whereIn($field, $value),
+                fn ($q) => $q->where($field, $value)
             );
 
         if ($onlyFirst) {
@@ -138,6 +139,19 @@ abstract class EloquentRepository extends AbstractRepository
     }
 
     /**
+     * @return Builder<TModel>
+     */
+    public function query(): Builder
+    {
+        return $this->model->newQuery();
+    }
+
+    public function raw(): \Illuminate\Database\Query\Builder
+    {
+        return DB::table($this->model->getTable());
+    }
+
+    /**
      * @param  TModel  $model
      * @param  TData  $data
      * @return TModel
@@ -167,13 +181,5 @@ abstract class EloquentRepository extends AbstractRepository
     protected function model(): Model
     {
         return new $this->modelClass;
-    }
-
-    /**
-     * @return Builder<TModel>
-     */
-    protected function query(): Builder
-    {
-        return $this->model->newQuery();
     }
 }

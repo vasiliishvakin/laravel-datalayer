@@ -2,8 +2,8 @@
 
 namespace Vaskiq\LaravelDataLayer\Models;
 
-use Tapp\Airtable\Facades\AirtableFacade;
 use Tapp\Airtable\Airtable;
+use Tapp\Airtable\Facades\AirtableFacade;
 use Vaskiq\LaravelDataLayer\Markers\AirtableModelInterface;
 
 /**

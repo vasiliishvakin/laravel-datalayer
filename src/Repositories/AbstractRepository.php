@@ -68,7 +68,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param  TModel  $source
      * @return TData
      */
-    protected function toData(mixed $source): Data
+    public function toData(mixed $source): Data
     {
         return $this->dataFactory->create($source, $this->dataClass());
     }
