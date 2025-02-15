@@ -20,13 +20,20 @@
   "require-dev": {
     "laravel/pint": "^1.18",
     "orchestra/testbench": "^9.5",
-    "larastan/larastan": "^2.0"
+    "larastan/larastan": "^2.0",
+    "pestphp/pest": "^3.5",
+    "phpunit/php-code-coverage": "^11.0"
   },
   "extra": {
     "laravel": {
       "providers": [
         "Vaskiq\\LaravelDataLayer\\Providers\\LaravelDataLayerServiceProvider"
       ]
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
     }
   }
 }

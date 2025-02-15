@@ -24,3 +24,10 @@ Thumbs.db
 *.ntvs*
 *.njsproj
 *.sln
+
+# Ignore build files
+build/
+
+# Ignore cache files
+.cache/
+.phpunit.cache
