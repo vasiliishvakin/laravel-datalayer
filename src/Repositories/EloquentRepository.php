@@ -136,6 +136,11 @@ abstract class EloquentRepository extends EloquentModelRepository
         return $this->dataFactory->empty($this->dataClass());
     }
 
+    public function new(mixed $data): Data
+    {
+        return $this->toData($data);
+    }
+
     /**
      * @return TData
      */
