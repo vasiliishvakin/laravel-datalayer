@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Vaskiq\LaravelDataLayer\Repositories;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Spatie\LaravelData\Data;
 use Vaskiq\LaravelDataLayer\Contracts\DataFactoryInterface;
 
@@ -13,9 +15,9 @@ use Vaskiq\LaravelDataLayer\Contracts\DataFactoryInterface;
  * @template TData of Data
  * @template TModel of Model
  *
- * @extends EloquentModelRepository<TModel>
+ * @extends AbstractRepository<TData, TModel>
  */
-abstract class EloquentRepository extends EloquentModelRepository
+abstract class EloquentRepositoryOld extends AbstractRepository
 {
     /** @var class-string<TModel> */
     protected readonly string $modelClass;
@@ -24,24 +26,19 @@ abstract class EloquentRepository extends EloquentModelRepository
      * @param  TModel  $model
      */
     public function __construct(
-        Model $model,
-        protected readonly DataFactoryInterface $dataFactory,
+        protected readonly Model $model,
+        DataFactoryInterface $dataFactory,
     ) {
-        parent::__construct($model);
+        parent::__construct($dataFactory);
         $this->modelClass = get_class($model);
     }
-
-    /**
-     * @return class-string<TData>
-     */
-    abstract public function dataClass(): string;
 
     /**
      * @return TData|null
      */
     public function find(string|int $id): ?Data
     {
-        $model = $this->findModel($id);
+        $model = $this->model->find($id);
 
         return $model ? $this->toData($model) : null;
     }
@@ -51,7 +48,7 @@ abstract class EloquentRepository extends EloquentModelRepository
      */
     public function all(): Collection
     {
-        $items = $this->allModels();
+        $items = $this->model->all();
 
         return $this->toDataCollection($items);
     }
@@ -89,29 +86,42 @@ abstract class EloquentRepository extends EloquentModelRepository
         $keyName = $this->model->getKeyName();
         $fields = $data->toArray();
 
-        if (isset($fields[$keyName])) {
-            $model = $this->updateModel($fields[$keyName], $fields);
-        } else {
-            $model = $this->createModel($fields);
-        }
+        $model = isset($fields[$keyName])
+            ? $this->model->find($fields[$keyName]) ?? $this->model()
+            : $this->model();
+
+        $model = $this->fillFromArray($model, $fields);
+
+        $model->save();
 
         return $this->toData($model);
     }
 
     /**
-     * @param  array<string, mixed>  $attributes
+     * @param  array<string, mixed>  $attributes  Array of attributes where keys are field names and values are their corresponding values.
      * @return TData|null
      */
     public function update(string|int $id, array $attributes): ?Data
     {
-        $model = $this->updateModel($id, $attributes);
+        $model = $this->model->find($id);
 
-        return $model ? $this->toData($model) : null;
+        if (! $model) {
+            return null;
+        }
+
+        $this->fillFromArray($model, $attributes)->save();
+
+        return $this->toData($model);
+    }
+
+    public function delete(string|int $id): bool
+    {
+        return (bool) $this->model->whereKey($id)->delete();
     }
 
     /**
      * @param  TData  $data
-     * @param  array<string>  $relations
+     * @param  array<string>  $relations  Array of relation names to load.
      * @return TData
      */
     public function loadRelations(Data $data, array $relations): Data
@@ -129,37 +139,32 @@ abstract class EloquentRepository extends EloquentModelRepository
     }
 
     /**
-     * @return array<string, mixed>
+     * @return Builder<TModel>
      */
-    public function empty(): array
+    public function query(): Builder
     {
-        return $this->dataFactory->empty($this->dataClass());
+        return $this->model->newQuery();
+    }
+
+    public function raw(): \Illuminate\Database\Query\Builder
+    {
+        return DB::table($this->model->getTable());
     }
 
     /**
-     * @return TData
+     * @param  TModel  $model
+     * @param  TData  $data
+     * @return TModel
      */
-    public function toData(mixed $source): Data
+    protected function fill(Model $model, Data $data): Model
     {
-        return $this->dataFactory->create($source, $this->dataClass());
-    }
-
-    public function delete(string|int $id): bool
-    {
-        return $this->deleteModel($id);
+        return $this->fillFromArray($model, $data->toArray());
     }
 
     /**
-     * @param  Collection<int, TModel>  $models
-     * @return Collection<int, TData>
-     */
-    protected function toDataCollection(Collection $models): Collection
-    {
-        return $this->dataFactory->map($models, $this->dataClass());
-    }
-
-    /**
+     * @param  TModel  $model
      * @param  array<string, mixed>  $data
+     * @return TModel
      */
     protected function fillFromArray(Model $model, array $data): Model
     {
@@ -174,5 +179,10 @@ abstract class EloquentRepository extends EloquentModelRepository
     protected function model(): Model
     {
         return new $this->modelClass;
+    }
+
+    protected function toDataCollection(Collection $models): Collection
+    {
+        return parent::toDataCollection($models);
     }
 }

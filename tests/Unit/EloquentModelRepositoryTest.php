@@ -5,7 +5,6 @@ declare(strict_types=1);
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Vaskiq\LaravelDataLayer\Repositories\EloquentModelRepository;
-use PHPUnit\Framework\TestCase;
 
 class TestEloquentModelRepository extends EloquentModelRepository
 {

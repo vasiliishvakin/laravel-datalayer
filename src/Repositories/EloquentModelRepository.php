@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace Vaskiq\LaravelDataLayer\Repositories;
 
+use Closure;
+use Illuminate\Contracts\Database\Query\Expression;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use Vaskiq\LaravelDataLayer\Contracts\EloquentModelRepositoryInterface;
-use Closure;
-use Illuminate\Contracts\Database\Query\Expression;
 
 abstract class EloquentModelRepository implements EloquentModelRepositoryInterface
 {
-    protected Model $model;
 
-    public function __construct(Model $model)
+    public function __construct(protected readonly Model $model)
     {
-        $this->model = $model;
+
     }
 
     public function findModel(int|string $id): ?Model
@@ -47,12 +46,14 @@ abstract class EloquentModelRepository implements EloquentModelRepositoryInterfa
         if ($model) {
             $model->update($data);
         }
+
         return $model;
     }
 
     public function deleteModel(int|string $id): bool
     {
         $model = $this->findModel($id);
+
         return $model ? $model->delete() : false;
     }
 
