@@ -141,7 +141,7 @@ abstract class AirtableRepository extends AbstractRepository
             }
         }
 
-        $record = $this->model->update($id, $attributes);
+        $record = $this->model->patch($id, $attributes);
 
         $error = $this->responseGetError($record);
         if ($error !== null) {
